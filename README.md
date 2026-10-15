@@ -1,8 +1,40 @@
 # ViaX
 
+![ViaX study companion](docs/media/cover.png)
+
 An open-source study companion for learning from your notes, practicing viva questions, and chatting with AI.
 
-[Live app](https://viax-iota.vercel.app)
+[Open the app](https://viax-iota.vercel.app) · [Download the presentation](docs/presentation/ViaX-Overview.pptx) · [Read the slides](docs/presentation/ViaX-Overview.pdf) · [Contribute](CONTRIBUTING.md)
+
+## A look inside
+
+### A dedicated space for AI conversations
+
+Ask general questions or select a subject to bring your study notes into the conversation.
+
+![ViaX AI chat on desktop](docs/media/chat-desktop.png)
+
+<details>
+<summary>Mobile view and getting started</summary>
+
+<p align="center"><img src="docs/media/chat-mobile.png" alt="ViaX chat on a mobile viewport" width="300"></p>
+
+![ViaX onboarding in dark mode](docs/media/onboarding.png)
+
+![ViaX sign-in screen in dark mode](docs/media/sign-in.png)
+
+</details>
+
+These are actual app captures. Chat screens show the empty conversation state in light mode; onboarding and sign-in show dark mode. The cover uses AI-generated study artwork. See the [visual asset notes](docs/media/README.md).
+
+## The study workflow
+
+| Step | What happens |
+| --- | --- |
+| Add your notes | Save your material under a subject. |
+| Build a study base | Extract passages, embeddings, and concepts supported by the notes. |
+| Practice | Use viva questions, flashcards, quizzes, or matching exercises. |
+| Return to weak areas | Follow mastery and revision information as you study. |
 
 ## Features
 
