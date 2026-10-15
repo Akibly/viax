@@ -1,0 +1,50 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# Node / Flutter
+node_modules/
+.vercel/
+.dart_tool/
+build/
+*.iml
+
+# Supabase local
+supabase/.branches/
+supabase/.temp/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local design sessions, captures, and exports
+.codex-poster-build/
+.impeccable/
+.playwright-mcp/
+outputs/
+viax-home.png
+docs/*.pdf
+docs/*.jpeg
+docs/*.jpg
+docs/*.html
+*.apk
+*.aab
+*.jks
+*.keystore
+*.pem
+*.key
+key.properties

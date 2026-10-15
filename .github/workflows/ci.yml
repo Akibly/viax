@@ -1,0 +1,106 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  edge-functions:
+    name: AI and document contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Check deployed function types
+        run: deno check supabase/functions/examine/index.ts supabase/functions/ingest/index.ts supabase/functions/chat/index.ts
+      - name: Offline AI and extraction regressions
+        run: deno test --allow-env supabase/functions/_shared/llm_test.ts supabase/functions/examine/validation_test.ts supabase/functions/examine/selection_test.ts supabase/functions/ingest/grounding_test.ts supabase/functions/ingest/extraction_test.ts
+
+  mobile:
+    name: Flutter app
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+
+  database:
+    name: Schema and isolation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Start local stack
+        run: supabase start
+
+      # Applies every migration from scratch. A migration that only works
+      # against an already-populated database fails here.
+      - name: Apply migrations
+        run: supabase db reset
+
+      # Audit SEC-01. This is the gate: if a student can read another
+      # student's rows, the build does not go out.
+      - name: Cross-user isolation test
+        run: supabase test db
+
+      # A schema change with no migration is a schema change that will not
+      # reach production.
+      - name: Fail on undeclared schema drift
+        run: supabase db diff --schema public --linked=false | tee /tmp/diff.txt
+          && test ! -s /tmp/diff.txt
+
+  backend:
+    name: Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -e ".[dev]"
+
+      - name: Lint
+        run: ruff check app tests
+
+      - name: Types
+        run: mypy app
+
+      - name: Tests
+        run: pytest --cov=app --cov-report=term-missing
+
+  # Placeholder for the eval suite (Day 7). It runs against the human-scored
+  # gold set and gates releases on agreement, not on the code compiling
+  # (audit AI-01). It is not wired to `on: push` because it spends money;
+  # it runs on demand and before a release.
+  calibration:
+    name: Gold-set calibration
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Wired on Day 7 — see PLAN.md."

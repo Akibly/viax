@@ -1,0 +1,70 @@
+[project]
+name = "vivax-api"
+version = "0.1.0"
+description = "VivaX — adaptive AI viva examiner. FastAPI backend."
+requires-python = ">=3.12"
+
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "asyncpg>=0.30",
+    "structlog>=24.4",
+    "httpx>=0.27",
+    "anthropic>=0.40",
+    "python-multipart>=0.0.12",
+    "pypdf>=5.1",
+    "anyio>=4.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=6.0",
+    "ruff>=0.7",
+    "mypy>=1.13",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q --strict-markers"
+markers = [
+    "integration: requires a running database",
+    "eval: runs the gold-set calibration suite; costs money",
+    "live: calls a real model provider; needs VIVAX_OPENROUTER_API_KEY",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "SIM", "RUF", "ASYNC", "S"]
+ignore = ["S101"]  # assert is how pytest works
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S105", "S106"]  # fixture credentials are not secrets
+# The heading and bullet patterns match the real Unicode dashes and bullets
+# that exported PDFs and slide decks contain. ASCII lookalikes would not match
+# them, so the "ambiguous character" warning is exactly backwards here.
+"app/domain/chunking.py" = ["RUF001"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["asyncpg.*", "structlog.*", "sentence_transformers.*", "pypdf.*"]
+ignore_missing_imports = true

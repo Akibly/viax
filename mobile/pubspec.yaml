@@ -1,0 +1,78 @@
+name: vivax
+description: ViaX — adaptive AI viva examiner.
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State. Riverpod over Bloc: the read path here is a lot of derived state
+  # (readiness from mastery, buckets from due dates) and providers compose
+  # that without ceremony.
+  flutter_riverpod: ^2.6.1
+
+  # Navigation. Deep flows (an active session, an evaluation report) open
+  # full-screen and exit back to where they were entered from, which needs
+  # real routes rather than a Navigator stack of anonymous pages.
+  go_router: ^14.6.1
+
+  # NOTE: Space Grotesk and Inter are named by the design system but are not
+  # vendored yet — raw.githubusercontent.com is blocked from this network, so
+  # assets/fonts is empty and Flutter falls back to the platform face. The
+  # layout, scale and weights are all correct; only the letterforms differ.
+  # Drop the two .ttf files into assets/fonts and restore the `fonts:` block
+  # at the bottom of this file to close it.
+
+  intl: ^0.19.0
+  flutter_markdown: ^0.7.7+1
+  url_launcher: ^6.3.2
+
+  # Voice answers (PRD §5.2, P1). A viva is spoken, so typing is the fallback
+  # rather than the point — but typing stays available always, because
+  # transcription accuracy varies by accent and device and a student must
+  # never be stuck (PRD §7).
+  speech_to_text: ^7.0.0
+
+  # Backend. RLS keys every row to auth.uid(), so the client must be
+  # authenticated before it can read or write anything at all.
+  supabase_flutter: ^2.8.0
+
+  # Picking a PDF to examine on. The product has no entrance without it.
+  file_picker: ^8.1.6
+  flutter_local_notifications: ^22.3.1
+  timezone: ^0.11.1
+  flutter_animate: ^4.5.2
+
+  # NOTE: package:crypto was removed. It reproducibly crashes this Dart
+  # toolchain while compiling MD5 — a digest ViaX never uses, pulled in
+  # because the package exports them all from one library. SHA-256 now lives
+  # in lib/data/content_hash.dart.
+
+  # ── Deferred until the feature that needs them lands ──────────────────
+  # These were declared in the original pubspec ahead of any code using them,
+  # which meant `pub get` pulled ~40 transitive packages the app never
+  # touched, and several (sqlite3_flutter_libs, local_auth) have no web
+  # support at all — enough to break the build target we test on. They come
+  # back one at a time, with the feature:
+  #
+  #   drift + sqlite3_flutter_libs + path_provider — offline revision packs
+  #   speech_to_text + flutter_tts — voice answers (P1)
+  #   local_auth        — biometric unlock
+  #   shared_preferences — settings persistence
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/viax_icon.png
+    - assets/viax_mark.png
+

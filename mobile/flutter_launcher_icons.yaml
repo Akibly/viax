@@ -1,0 +1,13 @@
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: false
+  image_path: "assets/viax_icon.png"
+  adaptive_icon_background: "#3157D5"
+  adaptive_icon_foreground: "assets/viax_mark.png"
+  adaptive_icon_monochrome: "assets/viax_mark.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/viax_icon.png"
+    background_color: "#F7F4ED"
+    theme_color: "#17213A"
